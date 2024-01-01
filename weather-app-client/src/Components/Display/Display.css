@@ -1,0 +1,9 @@
+.displayMain{
+    padding : 10px;
+    margin: 20px 30px;
+    background-color: white;
+    box-shadow: 0px 1px 10px rgb(188, 188, 188);
+    border-radius: 10px;
+    min-height: 270px;
+    background-color: rgb(190, 235, 253);
+}

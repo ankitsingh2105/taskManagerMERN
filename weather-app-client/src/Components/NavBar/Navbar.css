@@ -1,0 +1,17 @@
+.navMain ul{
+    display: flex;
+    margin-bottom: 3rem;
+}
+.navMain li{
+    margin: 10px 30px;
+    list-style: none;
+    font-size: 15px;
+    border: 1px solid black;
+    padding: 5px;
+    border-radius: 10px;
+    background-color: white;
+}
+.navbarInfo {
+    display: flex;
+    margin-left: auto;
+}
