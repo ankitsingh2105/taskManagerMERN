@@ -68,9 +68,9 @@ router.get("/user/me", auth, async (request, response) => {
 })
 
 router.delete("/user/delete", auth, async (req, res) => {
-    console.log("oprandkaniaknakdn : \n", req.user);
     try {
         await req.user.deleteOne();
+        // await req.user.remove();
         res.send("removed");
     }
     catch (error) {

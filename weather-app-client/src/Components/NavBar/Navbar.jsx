@@ -46,6 +46,17 @@ export default function Navbar() {
         }
     }
 
+    const handelDeleteUser = async()=>{
+        try {
+            await axios.delete("/user/delete", { headers: { "Authorization": `Bearer ${key}`}});
+            window.location.href = "/user/login";
+            localStorage.removeItem("jwtKeyisHere");
+        }
+        catch (error) {
+            console.log("Error : ", error);
+        }
+    } 
+
     return (
         <main className="navMain">
             <ul>
@@ -62,6 +73,7 @@ export default function Navbar() {
                                 <li>Name : {userName}</li>
                                 <li><Link onClick={handleLogout} >Log Out</Link></li>
                                 <li><Link onClick={handleSessionsLogout} >Log Out of all Sessions</Link></li>
+                                <li><Link onClick={handelDeleteUser} >Remove Me</Link></li>
                             </>
                     }
                 </div>
