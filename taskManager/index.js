@@ -37,7 +37,12 @@ app.use(Router);
 app.get("/alltaskslist"  , auth,  async(request , response)=>{
     try{
         // const data = await Task.find({ owner : request.user._id}); or we can 
-        await request.user.populate('myTasks');
+        await request.user.populate({
+            path : "myTasks",
+            options : {
+                limit : 20
+            }
+        });
         response.send(request.user.myTasks);
     }
     catch(error){

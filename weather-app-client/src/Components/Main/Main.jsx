@@ -8,10 +8,11 @@ export default function Main() {
   const [task, settask] = useState('');
   const [description, setdescription] = useState('');
   const [data, setdata] = useState([]);
-  const [isdata , setisdata]  = useState(false);
+  const [isdata, setisdata] = useState(false);
   const [float, setfloat] = useState(false);
   const [id, setId] = useState("");
   const [key, setKey] = useState("");
+  const [taskPerPage , setTaskPerPage] = useState(3);
 
   const currentDate = new Date();
 
@@ -34,6 +35,8 @@ export default function Main() {
         nameoftask: task,
         description: description,
         timeOfCreation: formattedDate,
+        timeOfUpdation: formattedDate,
+        status : "Not Completed"
       }
       await axios.post("/addtasks", object, { headers: { " Authorization": `Bearer ${key}` } })
       toast.success('Task added succefully', { autoClose: 1500 });
@@ -70,7 +73,7 @@ export default function Main() {
     setfloat(true);
     setId(id);
     settask(task);
-    setdescription(description)
+    setdescription(description);
   }
 
   const handleRealEdits = async () => {
@@ -85,12 +88,14 @@ export default function Main() {
       updatedData.description = description;
       updatedData.nameoftask = task;
       updatedData.timeOfCreation = formattedDate;
+      updatedData.timeOfUpdation = formattedDate;
 
       let tempArray = data.map((elem) => {
         if (elem._id === id) {
           elem.nameoftask = task;
           elem.description = description;
           elem.timeOfCreation = formattedDate
+          elem.timeOfUpdation = formattedDate
         }
         return elem;
       });
@@ -110,7 +115,7 @@ export default function Main() {
   const handleDelete = async (id) => {
     let tempArray = data.filter((e) => {
       return e._id !== id;
-    }) 
+    })
     setdata(tempArray);
     try {
       await axios.delete(`/task/deleteone/${id}`, { headers: { "Authorization": `Bearer ${key}` } });
@@ -121,11 +126,45 @@ export default function Main() {
     }
   }
 
+  const handleComplete = async (id) => {
+    console.log("this is completed");
+    let token = 0;
+    const tempArray = data.map((elem) => {
+      if (elem._id === id && elem.status === "Not Completed") {
+        elem.status = "Completed";
+        token=1;
+      }
+      else if(elem._id === id) {
+        elem.status = "Not Completed";
+        token=2;
+      }
+      return elem;
+    })
+
+    let updatedStatus = {};
+    if(token===1) updatedStatus.status = "Completed";
+    else updatedStatus.status = "Not Completed";
+
+    try{
+      await axios.post(`/task/updateone/${id}`,updatedStatus, {headers:{" Authorization": `Bearer ${key}`}});
+      setdata((data) => tempArray);
+    }
+    catch(error){
+      console.lof("This is the error : " , error);
+    }
+  }
+
+  const handleTaskPerPage = (e)=>{
+    console.log("this is the page : " , e.target.value);
+  }
+
+  
+
 
   return (
     <center>
       <div className="App">
-        <h1>Task Manager</h1>
+        <h1>Ankit's Task Manager</h1>
         <form action="">
           <input
             type="text" placeholder="Enter task" value={task} required onChange={(e) => settask(e.target.value)} />
@@ -147,25 +186,32 @@ export default function Main() {
               {
                 !isdata ? <div className='loader' ></div> :
                   <div>
-                    <main className='gridSystem' >
-                      {
-                        data.map((elem , index) => {
-                          return (
-                            <>
-                              <Display
-                                key={index}
-                                id={elem._id}
-                                handleDelete={() => handleDelete(elem._id)}
-                                handleEdit={() => handleEdit(elem._id, elem.description, elem.nameoftask)}
-                                time={elem.timeOfCreation}
-                                tasks={elem.nameoftask}
-                                description={elem.description}
-                              />
-                            </>
-                          )
-                        })
-                      }
-                    </main>
+                    {
+                      data.length === 0 ?
+                        <center>No task added </center>
+                        :
+                        <main className='gridSystem' >
+                          {
+                            data.map((elem, index) => {
+                              return (
+                                <>
+                                  <Display
+                                    key={index}
+                                    id={elem._id}
+                                    handleDelete={() => handleDelete(elem._id)}
+                                    handleEdit={() => handleEdit(elem._id, elem.description, elem.nameoftask)}
+                                    handleComplete={() => handleComplete(elem._id)}
+                                    time={elem.timeOfCreation}
+                                    tasks={elem.nameoftask}
+                                    description={elem.description}
+                                    status={elem.status}
+                                  />
+                                </>
+                              )
+                            })
+                          }
+                        </main>
+                    }
                   </div>
               }
             </>
@@ -188,6 +234,13 @@ export default function Main() {
             <div></div>
         }
       </main>
+
+      <main>
+        <input style={{fontSize : "20px" , padding:"10px"}} onChange={handleTaskPerPage} placeholder='Enter the tasks per page' type="number" />
+      </main>
+      <br />
+      <br />
+
     </center >
   );
 }

@@ -8,6 +8,10 @@ const userSchema  = new mongoose.Schema({
         type : String,
         default : new Date
     },
+    timeOfUpdation: {
+        type  : String,
+        default : new Date,
+    },
     description : {
         type : String,
         required : true
@@ -17,6 +21,10 @@ const userSchema  = new mongoose.Schema({
         required  : true,
         // todo : this is used to refernce this object field with the "User" model
         ref : "User"
+    },
+    status : {
+        type: String,
+        default : "Not Completed"
     }
 })
 const Tasks = mongoose.model("tasks" , userSchema);

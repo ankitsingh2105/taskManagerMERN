@@ -1,7 +1,7 @@
 import React from 'react';
 import "./Display.css"
 export default function Display(props) {
-  const { tasks, description,time, handleEdit , handleDelete } = props;
+  const { tasks, description,time, handleEdit , handleDelete, handleComplete, status} = props;
   return (
     <main className='displayMain'>
       <div><b> {tasks}</b></div>
@@ -13,6 +13,7 @@ export default function Display(props) {
       <br />
       <center>
         <button onClick={()=>{handleEdit()}} >Edit</button> &nbsp; &nbsp; 
+        <button onClick={()=>{handleComplete()}} >{status}</button> &nbsp; &nbsp; 
         <button onClick={()=>{handleDelete()}} >Delete</button>
       </center>
     </main >
