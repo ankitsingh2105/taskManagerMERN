@@ -4,6 +4,7 @@ const User = require("../src/models/user");
 const app = express();
 const auth = require("../src/middleWare/auth")
 const multer = require("multer");
+const sharp = require("sharp");
 app.use(router);
 
 
@@ -81,7 +82,9 @@ router.delete("/user/delete", auth, async (req, res) => {
 // * defining the destination folder 
 
 const upload = multer({
-    dest : "avatarImage",
+    // todo:  dest : "avatarImage",  
+    // !removing this so that the multer gives us the data so that we can so something whith it
+    // !other wise it was saving data in the avatarImage folder, we will do something in the router we defined below
     limits : {
         // 1000000 bytes = 1mega bytes, restricting the file size to 1 mb
         fileSize : 1000000
@@ -107,8 +110,25 @@ const upload = multer({
     }
 })
 
-router.post("/user/me/avatar" , upload.single("avatar") , async(request , response)=>{
-    response.send();
+router.post("/user/me/avatar" , auth, upload.single("avatar") , async(request , response)=>{
+    const currentUser = request.user  //* geetting from the auth middleWare
+    currentUser.avatar = request.file.buffer;
+    await currentUser.save();
+    response.send(currentUser);
+},
+(error , request , response , next)=>{
+    response.status(401).send({error : error.message})
+}
+// todo : this is used to put an json error response, insted of html moreover this has to look like this only
+)
+
+
+
+router.delete("/user/me/avatar/delete" , auth , async(request , response)=>{
+    const currentUser = request.user;
+    currentUser.avatar = "";
+    await currentUser.save();
+    response.send("deleted the image");
 })
 
 
