@@ -40,7 +40,7 @@ app.get("/alltaskslist"  , auth,  async(request , response)=>{
         await request.user.populate({
             path : "myTasks",
             options : {
-                limit : 20
+                limit : 3,
             }
         });
         response.send(request.user.myTasks);
@@ -98,20 +98,6 @@ app.post("/task/updateone/:id" , auth, async(request , response)=>{
 app.listen( 4000 , ()=>{
     console.log("connected and listening")
 })  
-
-
-const main = async ()=>{
-    // const task = await Task.findById("658ced5f7f4cc48bea7da393");
-    // //  now i have the onwer how i try to find the profile of the owner
-    // await task.populate('owner');
-    // console.log(task.owner);
-
-    const user = await User.findById("658bd25c3ea0dc932f62bab4");
-    await user.populate('myTasks');
-    console.log(user.myTasks);
-    
-}
-// main();
 
 
 

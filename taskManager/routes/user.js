@@ -3,6 +3,7 @@ const router = new express.Router();
 const User = require("../src/models/user");
 const app = express();
 const auth = require("../src/middleWare/auth")
+const multer = require("multer");
 app.use(router);
 
 
@@ -70,12 +71,45 @@ router.get("/user/me", auth, async (request, response) => {
 router.delete("/user/delete", auth, async (req, res) => {
     try {
         await req.user.deleteOne();
-        // await req.user.remove();
         res.send("removed");
     }
     catch (error) {
         res.status(500).send("error");
     }
 })
+
+// * defining the destination folder 
+
+const upload = multer({
+    dest : "avatarImage",
+    limits : {
+        // 1000000 bytes = 1mega bytes, restricting the file size to 1 mb
+        fileSize : 1000000
+    },
+    //  cb = callback
+    fileFilter(request , file , cb){
+
+        const allowedExtensions = [".jpg", ".jpeg", ".png"];
+        // todo : some method check if any one element in the array passes the test!!
+        // * this will check if the ends with string is of "any" valid type
+        if(!allowedExtensions.some((fileType) => file.originalname.endsWith(fileType))){
+            return cb(new Error("allowed extensios are jpg , jpeg , png"));
+        }
+
+        // todo : if everything is fine we will accept the file : 
+        cb(undefined , true);
+
+        // ! we have 3 options
+        // cb(new Error("File must be an image"));
+        // cb(undefined , true);
+        // cb(undefined , false);
+
+    }
+})
+
+router.post("/user/me/avatar" , upload.single("avatar") , async(request , response)=>{
+    response.send();
+})
+
 
 module.exports = router; 
