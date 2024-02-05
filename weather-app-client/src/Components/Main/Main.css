@@ -24,9 +24,9 @@ body{
 
 .gridSystem{
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 4fr 4fr;
   align-items: center;
-  margin: 10px 50px;
+  /* margin: 10px 50px; */
 }
 
 .floating{

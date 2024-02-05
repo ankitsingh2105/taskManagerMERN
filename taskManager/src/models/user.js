@@ -29,8 +29,8 @@ const userSchema = new mongoose.Schema({
             required: true,
         }
     }],
-    avatar : {
-        type : Buffer,
+    avatar: {
+        type: Buffer,
     }
 });
 
@@ -55,7 +55,7 @@ userSchema.methods.getpublicProfile = async function () {
 
 userSchema.methods.generateAuthToken = async function () {
     const user = this;
-
+    
     // this will be used in future as 
     // * jwt.verify( " the extracted token " , thisismyfirstMERNapp)
     // ! also we have proved this with _id which we will use in the future!! 

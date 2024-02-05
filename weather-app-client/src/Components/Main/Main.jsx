@@ -12,7 +12,6 @@ export default function Main() {
   const [float, setfloat] = useState(false);
   const [id, setId] = useState("");
   const [key, setKey] = useState("");
-  const [taskPerPage , setTaskPerPage] = useState(3);
 
   const currentDate = new Date();
 
@@ -36,7 +35,7 @@ export default function Main() {
         description: description,
         timeOfCreation: formattedDate,
         timeOfUpdation: formattedDate,
-        status : "Not Completed"
+        status: "Not Completed"
       }
       await axios.post("/addtasks", object, { headers: { " Authorization": `Bearer ${key}` } })
       toast.success('Task added succefully', { autoClose: 1500 });
@@ -54,7 +53,6 @@ export default function Main() {
     setKey((prevKey) => jwtKey);
     const displayData = async (e) => {
       try {
-        console.log("newone -> ", jwtKey);
         const response = await axios.get("/alltaskslist", { headers: { " Authorization": `Bearer ${jwtKey}` } })
         setdata(response.data);
         setisdata(true);
@@ -99,7 +97,6 @@ export default function Main() {
         }
         return elem;
       });
-      console.log(tempArray);
       setdata(tempArray)
 
       await axios.post(`/task/updateone/${id}`, updatedData, { headers: { " Authorization": `Bearer ${key}` } });
@@ -132,39 +129,41 @@ export default function Main() {
     const tempArray = data.map((elem) => {
       if (elem._id === id && elem.status === "Not Completed") {
         elem.status = "Completed";
-        token=1;
+        token = 1;
       }
-      else if(elem._id === id) {
+      else if (elem._id === id) {
         elem.status = "Not Completed";
-        token=2;
+        token = 2;
       }
       return elem;
     })
 
     let updatedStatus = {};
-    if(token===1) updatedStatus.status = "Completed";
+    if (token === 1) updatedStatus.status = "Completed";
     else updatedStatus.status = "Not Completed";
 
-    try{
-      await axios.post(`/task/updateone/${id}`,updatedStatus, {headers:{" Authorization": `Bearer ${key}`}});
+    try {
+      await axios.post(`/task/updateone/${id}`, updatedStatus, { headers: { " Authorization": `Bearer ${key}` } });
       setdata((data) => tempArray);
     }
-    catch(error){
-      console.lof("This is the error : " , error);
+    catch (error) {
+      console.lof("This is the error : ", error);
     }
   }
 
-  const handleTaskPerPage = (e)=>{
-    console.log("this is the page : " , e.target.value);
+  const handleTaskPerPage = (e) => {
+    console.log("this is the page : ", e.target.value);
   }
 
-  
+
+  // ! handeling images
+
 
 
   return (
     <center>
       <div className="App">
-        <h1>Ankit's Task Manager</h1>
+        <h1>Task Manager App</h1>
         <form action="">
           <input
             type="text" placeholder="Enter task" value={task} required onChange={(e) => settask(e.target.value)} />
@@ -235,11 +234,11 @@ export default function Main() {
         }
       </main>
 
-      <main>
-        <input style={{fontSize : "20px" , padding:"10px"}} onChange={handleTaskPerPage} placeholder='Enter the tasks per page' type="number" />
+      {/* <main>
+        <input style={{ fontSize: "20px", padding: "10px" }} onChange={handleTaskPerPage} placeholder='Enter the tasks per page' type="number" />
       </main>
       <br />
-      <br />
+      <br /> */}
 
     </center >
   );

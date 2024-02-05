@@ -1,11 +1,11 @@
 const express = require("express");
-const router = new express.Router();
+const router = express.Router();
 const User = require("../src/models/user");
 const app = express();
 const auth = require("../src/middleWare/auth")
 const multer = require("multer");
-const sharp = require("sharp");
-app.use(router);
+// app.use(router); 
+// I am not getting the use of this line
 
 
 router.post("/user/signup", async (req, res) => {
@@ -41,7 +41,6 @@ router.post("/user/login", async (req, res) => {
 });
 
 router.post("/user/logout", auth, async (request, response) => {
-    console.log("this is the user logging out this time : ", request.user);
     try {
         request.user.tokens = request.user.tokens.filter((token) => {
             return token.token !== request.tokenvaa;
@@ -85,22 +84,22 @@ const upload = multer({
     // todo:  dest : "avatarImage",  
     // !removing this so that the multer gives us the data so that we can so something whith it
     // !other wise it was saving data in the avatarImage folder, we will do something in the router we defined below
-    limits : {
+    limits: {
         // 1000000 bytes = 1mega bytes, restricting the file size to 1 mb
-        fileSize : 1000000
+        fileSize: 1000000
     },
     //  cb = callback
-    fileFilter(request , file , cb){
+    fileFilter(request, file, cb) {
 
         const allowedExtensions = [".jpg", ".jpeg", ".png"];
         // todo : some method check if any one element in the array passes the test!!
         // * this will check if the ends with string is of "any" valid type
-        if(!allowedExtensions.some((fileType) => file.originalname.endsWith(fileType))){
+        if (!allowedExtensions.some((fileType) => file.originalname.endsWith(fileType))) {
             return cb(new Error("allowed extensios are jpg , jpeg , png"));
         }
 
         // todo : if everything is fine we will accept the file : 
-        cb(undefined , true);
+        cb(undefined, true);
 
         // ! we have 3 options
         // cb(new Error("File must be an image"));
@@ -110,21 +109,21 @@ const upload = multer({
     }
 })
 
-router.post("/user/me/avatar" , auth, upload.single("avatar") , async(request , response)=>{
+router.post("/user/me/avatar", auth, upload.single("avatar"), async (request, response) => {
     const currentUser = request.user  //* geetting from the auth middleWare
     currentUser.avatar = request.file.buffer;
     await currentUser.save();
     response.send(currentUser);
 },
-(error , request , response , next)=>{
-    response.status(401).send({error : error.message})
-}
-// todo : this is used to put an json error response, insted of html moreover this has to look like this only
+    (error, request, response, next) => {
+        response.status(401).send({ error: error.message })
+    }
+    // todo : this is used to put an json error response, insted of html moreover this has to look like this only
 )
 
 
 
-router.delete("/user/me/avatar/delete" , auth , async(request , response)=>{
+router.delete("/user/me/avatar/delete", auth, async (request, response) => {
     const currentUser = request.user;
     currentUser.avatar = "";
     await currentUser.save();
